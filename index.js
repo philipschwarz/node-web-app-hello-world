@@ -91,6 +91,19 @@ app.get('/', function(req, res){
 app.post('/', function(req, res){
   var userName = req.body.userName;
   var message = req.body.message;
+  pool.connect(function(err, client, done) {
+    if(err) {
+      return console.error('error fetching client from pool', err);
+    }
+    client.query('INSERT INTO message (USERNAME, MESSAGE) VALUES ($1,$2);', [userName, message], function(err, result) {
+      //call `done()` to release the client back to the pool
+      done();
+
+      if(err) {
+        return console.error('error running query', err);
+      }
+    });
+  });
   var html =
     userName + ": you have just sent message '" + message + "'.<br>" +
     '<a href="/">Send another</a>';
