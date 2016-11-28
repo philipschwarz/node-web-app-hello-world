@@ -51,3 +51,6 @@ docker run --name node-web-app \
 
 docker ps -a
 docker stop node-web-app
+
+http://localhost:3000/messages
+==> [{"username":"philips3","message":"This is Philip's test message"},{"username":"lewpenks5","message":"This is Lewpen's test message"}]
