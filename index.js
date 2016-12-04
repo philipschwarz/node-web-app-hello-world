@@ -30,7 +30,7 @@ app.get('/message', function(request, response){
 app.post('/message', function(request, response){
   var userName = request.body.userName;
   var messageToSend = request.body.message;
-  sendMessageAndReportSuccess(userName, messageToSend, response);
+  persistMessageAndReportSuccess(userName, messageToSend, response);
 });
 
 // Use Case Handling ///////////////////////////////////
@@ -60,7 +60,7 @@ function  displayFormForSendingMessage(response) {
   response.send(html);
 };
 
-function sendMessageAndReportSuccess(userName, messageToSend, response) {
+function persistMessageAndReportSuccess(userName, messageToSend, response) {
   var successReport = createReportTellingUserTheyHaveSentMessage(userName, messageToSend);
   var query = 'INSERT INTO message (USERNAME, MESSAGE) VALUES ($1,$2);';
   var queryParameters = [userName, messageToSend];
