@@ -1,5 +1,7 @@
 const express = require('express');
 const pg = require('pg');
+const amqp = require('amqplib/callback_api');
+
 /*
  * body-parser is a piece of express middleware that
  *   reads a form's input and stores it as a javascript
@@ -62,9 +64,12 @@ function  displayFormForSendingMessage(response) {
 
 function persistMessageAndReportSuccess(userName, messageToSend, response) {
   var successReport = createReportTellingUserTheyHaveSentMessage(userName, messageToSend);
-  var query = 'INSERT INTO message (USERNAME, MESSAGE) VALUES ($1,$2);';
+  var query = 'INSERT INTO message (USERNAME, MESSAGE) VALUES ($1,$2) RETURNING id;';
   var queryParameters = [userName, messageToSend];
-  var queryResultProcessor = function (queryResult) { response.send(successReport); };
+  var queryResultProcessor = function (queryResult) {
+    createMessageEvent(queryResult, userName, messageToSend);
+    response.send(successReport);
+  };
   runQuery(query, queryParameters, queryResultProcessor);
 };
 
@@ -125,3 +130,38 @@ function runQuery(query, parameters, processResult) {
     });
   });
 };
+
+// MESSAGING /////////////////////////////////
+
+function getAmpqServerUrl()
+{
+  const host = process.env.RABBITMQ_PORT_5672_TCP_ADDR;
+  const url = 'amqp://' + host;
+  return url;
+}
+
+const AMPQ_SERVER = getAmpqServerUrl();
+
+function createMessageEvent(queryResult, userName, messageToSend){
+  console.log("queryResult=" + JSON.stringify(queryResult));
+  messageId = queryResult.rows[0].id;
+
+  amqp.connect(AMPQ_SERVER, function(error, connection)
+  {
+    connection.createChannel( function(error, channel)
+    {
+      var queueName = 'message-event';
+
+      channel.assertQueue(queueName, {durable: false});
+
+      channel.sendToQueue(queueName, new Buffer(messageId.toString()));
+
+      console.log("Sent message id " + messageId + "to queue " + queueName + ".");
+
+    });
+
+    setTimeout(function() { connection.close(); process.exit(0) }, 500);
+
+  });
+
+}
