@@ -8,8 +8,8 @@ npm init -f
 npm install --save express
 npm install body-parser --save
 npm install pg --save
+npm install amqplib --save
 node index.js
-
 
 docker run --name some-postgres \
            --env POSTGRES_PASSWORD=pwd \
