@@ -1,22 +1,8 @@
-https://www.npmjs.com/package/pg
-http://code.runnable.com/U0sU598vXio2uD-1/example-reading-form-input-with-express-4-0-and-body-parser-for-node-js
-https://scotch.io/tutorials/use-expressjs-to-get-url-and-post-parameters
-http://superuser.com/questions/149329/what-is-the-curl-command-line-syntax-to-do-a-post-request
-
-
-npm init -f
-npm install --save express
-npm install body-parser --save
-npm install pg --save
-npm install amqplib --save
-node index.js
 
 docker run --name some-postgres \
            --env POSTGRES_PASSWORD=pwd \
            --detach \
            postgres
-
-
 
 docker run --interactive \
            --tty \
