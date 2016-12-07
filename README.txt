@@ -60,15 +60,6 @@ docker run --name node-web-app \
            node:latest \
            node index.js
 
-docker run --name node-receive-app \
-           --interactive \
-           --rm \
-           --volume /Users/pschwarz/Documents/sefaira/prep/node-web-app-hello-world:/usr/src/myapp \
-           --workdir /usr/src/myapp \
-           --link rabbitmq:rabbitmq \
-           node:latest \
-           node receive.js
-
 https://github.com/forty9ten/docker-rabbitmq-example
 
 docker run "helloworld-ecr:1.0" \
